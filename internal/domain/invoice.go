@@ -1,7 +1,7 @@
 package domain
 
 import (
-	"math/rand/v2"
+	"math/rand"
 	"time"
 
 	"github.com/google/uuid"
@@ -17,8 +17,8 @@ const (
 
 type Invoice struct {
 	ID             string
-	Amount         float64
 	AccountID      string
+	Amount         float64
 	Status         Status
 	Description    string
 	PaymentType    string
@@ -60,14 +60,16 @@ func NewInvoice(
 		UpdatedAt:      time.Now(),
 	}, nil
 }
+
 func (i *Invoice) Process() error {
 	if i.Amount > 10000 {
 		return nil
 	}
 
+	randomSource := rand.New(rand.NewSource(time.Now().Unix()))
 	var newStatus Status
 
-	if rand.Float64() <= 0.7 {
+	if randomSource.Float64() <= 0.7 {
 		newStatus = StatusApproved
 	} else {
 		newStatus = StatusRejected
@@ -84,6 +86,5 @@ func (i *Invoice) UpdateStatus(newStatus Status) error {
 
 	i.Status = newStatus
 	i.UpdatedAt = time.Now()
-
 	return nil
 }

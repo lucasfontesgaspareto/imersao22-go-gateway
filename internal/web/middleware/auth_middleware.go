@@ -12,15 +12,16 @@ type AuthMiddleware struct {
 }
 
 func NewAuthMiddleware(accountService *service.AccountService) *AuthMiddleware {
-	return &AuthMiddleware{accountService: accountService}
+	return &AuthMiddleware{
+		accountService: accountService,
+	}
 }
 
 func (m *AuthMiddleware) Authenticate(next http.Handler) http.Handler {
-
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		apiKey := r.Header.Get("X-API-Key")
+		apiKey := r.Header.Get("X-API-KEY")
 		if apiKey == "" {
-			http.Error(w, "API Key is required", http.StatusUnauthorized)
+			http.Error(w, "X-API-KEY is required", http.StatusUnauthorized)
 			return
 		}
 

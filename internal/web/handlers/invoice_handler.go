@@ -11,11 +11,13 @@ import (
 )
 
 type InvoiceHandler struct {
-	invoiceService *service.InvoiceService
+	service *service.InvoiceService
 }
 
-func NewInvoiceHandler(invoiceService *service.InvoiceService) *InvoiceHandler {
-	return &InvoiceHandler{invoiceService: invoiceService}
+func NewInvoiceHandler(service *service.InvoiceService) *InvoiceHandler {
+	return &InvoiceHandler{
+		service: service,
+	}
 }
 
 func (h *InvoiceHandler) Create(w http.ResponseWriter, r *http.Request) {
@@ -26,9 +28,9 @@ func (h *InvoiceHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	input.APIKey = r.Header.Get("X-API-Key")
+	input.APIKey = r.Header.Get("X-API-KEY")
 
-	output, err := h.invoiceService.Create(input)
+	output, err := h.service.Create(input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -46,13 +48,13 @@ func (h *InvoiceHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	apiKey := r.Header.Get("X-API-Key")
+	apiKey := r.Header.Get("X-API-KEY")
 	if apiKey == "" {
-		http.Error(w, "API Key is required", http.StatusUnauthorized)
+		http.Error(w, "X-API-KEY is required", http.StatusBadRequest)
 		return
 	}
 
-	output, err := h.invoiceService.GetByID(id, apiKey)
+	output, err := h.service.GetByID(id, apiKey)
 	if err != nil {
 		switch err {
 		case domain.ErrInvoiceNotFound:
@@ -75,13 +77,13 @@ func (h *InvoiceHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *InvoiceHandler) ListByAccount(w http.ResponseWriter, r *http.Request) {
-	apiKey := r.Header.Get("X-API-Key")
+	apiKey := r.Header.Get("X-API-KEY")
 	if apiKey == "" {
-		http.Error(w, "API Key is required", http.StatusUnauthorized)
+		http.Error(w, "X-API-KEY is required", http.StatusUnauthorized)
 		return
 	}
 
-	output, err := h.invoiceService.ListByAccountAPIKey(apiKey)
+	output, err := h.service.ListByAccountAPIKey(apiKey)
 	if err != nil {
 		switch err {
 		case domain.ErrAccountNotFound:

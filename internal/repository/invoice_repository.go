@@ -17,7 +17,7 @@ func NewInvoiceRepository(db *sql.DB) *InvoiceRepository {
 func (r *InvoiceRepository) Save(invoice *domain.Invoice) error {
 	_, err := r.db.Exec(
 		`
-		INSERT INTO invoices (id, account_id, amount, status, description, payment_type, card_last_digits, created_at, update_at)
+		INSERT INTO invoices (id, account_id, amount, status, description, payment_type, card_last_digits, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 		`,
 		invoice.ID,
@@ -31,7 +31,7 @@ func (r *InvoiceRepository) Save(invoice *domain.Invoice) error {
 		invoice.UpdatedAt,
 	)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	return nil
@@ -54,17 +54,19 @@ func (r *InvoiceRepository) FindByID(id string) (*domain.Invoice, error) {
 		&invoice.CreatedAt,
 		&invoice.UpdatedAt,
 	)
-	if err != nil {
-		return nil, err
-	}
 
 	if err == sql.ErrNoRows {
 		return nil, domain.ErrInvoiceNotFound
 	}
 
+	if err != nil {
+		return nil, err
+	}
+
 	return &invoice, nil
 }
 
+// FindByAccountID busca todas as faturas de um determinado accountID
 func (r *InvoiceRepository) FindByAccountID(accountID string) ([]*domain.Invoice, error) {
 	rows, err := r.db.Query(`
 		SELECT id, account_id, amount, status, description, payment_type, card_last_digits, created_at, updated_at
@@ -110,12 +112,12 @@ func (r *InvoiceRepository) UpdateStatus(invoice *domain.Invoice) error {
 		return err
 	}
 
-	rowsEffected, err := rows.RowsAffected()
+	rowsAffected, err := rows.RowsAffected()
 	if err != nil {
 		return err
 	}
 
-	if rowsEffected == 0 {
+	if rowsAffected == 0 {
 		return domain.ErrInvoiceNotFound
 	}
 

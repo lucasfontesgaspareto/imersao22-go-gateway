@@ -14,7 +14,6 @@ const (
 
 type CreateInvoiceInput struct {
 	APIKey         string
-	AccountID      string  `json:"account_id"`
 	Amount         float64 `json:"amount"`
 	Description    string  `json:"description"`
 	PaymentType    string  `json:"payment_type"`
@@ -55,16 +54,16 @@ func ToInvoice(input CreateInvoiceInput, accountID string) (*domain.Invoice, err
 	)
 }
 
-func FromInvoice(Invoice *domain.Invoice) *InvoiceOutput {
+func FromInvoice(invoice *domain.Invoice) *InvoiceOutput {
 	return &InvoiceOutput{
-		ID:             Invoice.ID,
-		AccountID:      Invoice.AccountID,
-		Amount:         Invoice.Amount,
-		Status:         string(Invoice.Status),
-		Description:    Invoice.Description,
-		PaymentType:    Invoice.PaymentType,
-		CardLastDigits: Invoice.CardLastDigits,
-		CreatedAt:      Invoice.CreatedAt,
-		UpdatedAt:      Invoice.UpdatedAt,
+		ID:             invoice.ID,
+		AccountID:      invoice.AccountID,
+		Amount:         invoice.Amount,
+		Status:         string(invoice.Status),
+		Description:    invoice.Description,
+		PaymentType:    invoice.PaymentType,
+		CardLastDigits: invoice.CardLastDigits,
+		CreatedAt:      invoice.CreatedAt,
+		UpdatedAt:      invoice.UpdatedAt,
 	}
 }

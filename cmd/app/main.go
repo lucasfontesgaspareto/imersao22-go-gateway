@@ -27,12 +27,12 @@ func main() {
 
 	connStr := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		getEnv("DB_HOST", "host"),
-		getEnv("DB_PORT", "port"),
-		getEnv("DB_USER", "user"),
-		getEnv("DB_PASSWORD", "password"),
-		getEnv("DB_NAME", "dbname"),
-		getEnv("DB_SSL_MODE", "sslmode"),
+		getEnv("DB_HOST", "db"),
+		getEnv("DB_PORT", "5432"),
+		getEnv("DB_USER", "postgres"),
+		getEnv("DB_PASSWORD", "postgres"),
+		getEnv("DB_NAME", "gateway"),
+		getEnv("DB_SSL_MODE", "disable"),
 	)
 
 	db, err := sql.Open("postgres", connStr)
@@ -42,8 +42,9 @@ func main() {
 	defer db.Close()
 
 	accountRepository := repository.NewAccountRepository(db)
-	invoiceRepository := repository.NewInvoiceRepository(db)
 	accountService := service.NewAccountService(accountRepository)
+
+	invoiceRepository := repository.NewInvoiceRepository(db)
 	invoiceService := service.NewInvoiceService(invoiceRepository, *accountService)
 
 	port := getEnv("HTTP_PORT", "8080")

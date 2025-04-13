@@ -6,14 +6,14 @@ import (
 )
 
 type InvoiceService struct {
-	repository     domain.InvoiceRepository
-	accountService AccountService
+	invoiceRepository domain.InvoiceRepository
+	accountService    AccountService
 }
 
-func NewInvoiceService(repository domain.InvoiceRepository, accountService AccountService) *InvoiceService {
+func NewInvoiceService(invoiceRepository domain.InvoiceRepository, accountService AccountService) *InvoiceService {
 	return &InvoiceService{
-		repository:     repository,
-		accountService: accountService,
+		invoiceRepository: invoiceRepository,
+		accountService:    accountService,
 	}
 }
 
@@ -33,13 +33,13 @@ func (s *InvoiceService) Create(input dto.CreateInvoiceInput) (*dto.InvoiceOutpu
 	}
 
 	if invoice.Status == domain.StatusApproved {
-		_, err = s.accountService.UpdateBalance(accountOutput.ID, invoice.Amount)
+		_, err = s.accountService.UpdateBalance(input.APIKey, invoice.Amount)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if err := s.repository.Save(invoice); err != nil {
+	if err := s.invoiceRepository.Save(invoice); err != nil {
 		return nil, err
 	}
 
@@ -47,7 +47,7 @@ func (s *InvoiceService) Create(input dto.CreateInvoiceInput) (*dto.InvoiceOutpu
 }
 
 func (s *InvoiceService) GetByID(id, apiKey string) (*dto.InvoiceOutput, error) {
-	invoice, err := s.repository.FindByID(id)
+	invoice, err := s.invoiceRepository.FindByID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (s *InvoiceService) GetByID(id, apiKey string) (*dto.InvoiceOutput, error) 
 }
 
 func (s *InvoiceService) ListByAccount(accountID string) ([]*dto.InvoiceOutput, error) {
-	invoices, err := s.repository.FindByAccountID(accountID)
+	invoices, err := s.invoiceRepository.FindByAccountID(accountID)
 	if err != nil {
 		return nil, err
 	}

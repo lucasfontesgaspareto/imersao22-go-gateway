@@ -20,9 +20,8 @@ func (s *AccountService) CreateAccount(input dto.CreateAccountInput) (*dto.Accou
 	if err != nil && err != domain.ErrAccountNotFound {
 		return nil, err
 	}
-
 	if existingAccount != nil {
-		return nil, domain.ErrDuplicateAPIKey
+		return nil, domain.ErrDuplicatedAPIKey
 	}
 
 	err = s.repository.Save(account)
@@ -45,7 +44,6 @@ func (s *AccountService) UpdateBalance(apiKey string, amount float64) (*dto.Acco
 	if err != nil {
 		return nil, err
 	}
-
 	output := dto.FromAccount(account)
 	return &output, nil
 }
@@ -55,7 +53,6 @@ func (s *AccountService) FindByAPIKey(apiKey string) (*dto.AccountOutput, error)
 	if err != nil {
 		return nil, err
 	}
-
 	output := dto.FromAccount(account)
 	return &output, nil
 }
@@ -65,7 +62,6 @@ func (s *AccountService) FindByID(id string) (*dto.AccountOutput, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	output := dto.FromAccount(account)
 	return &output, nil
 }

@@ -27,7 +27,6 @@ func generateAPIKey() string {
 }
 
 func NewAccount(name, email string) *Account {
-
 	account := &Account{
 		ID:        uuid.New().String(),
 		Name:      name,
