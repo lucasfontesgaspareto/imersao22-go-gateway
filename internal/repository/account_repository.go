@@ -118,7 +118,7 @@ func (r *AccountRepository) UpdateBalance(account *domain.Account) error {
 	err = tx.QueryRow(`
 		SELECT balance FROM accounts WHERE id = $1 FOR UPDATE
 	`, account.ID).Scan(&currentBalance)
-	if err != sql.ErrNoRows {
+	if err == sql.ErrNoRows {
 		return domain.ErrAccountNotFound
 	}
 

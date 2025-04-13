@@ -8,10 +8,32 @@ POST {{baseUrl}}/accounts
 Content-Type: application/json
 
 {
-    "name": "John Doe",
-    "email": "john@doe.com"
+    "name": "Lucas",
+    "email": "lucas@email.com"
 }
 
 ### Obter dados da conta
 GET {{baseUrl}}/accounts
+X-API-Key: {{apiKey}}
+
+### Criar uma nova fatura
+# @name createInvoice
+POST {{baseUrl}}/invoice
+Content-Type: application/json
+X-API-Key: {{apiKey}}
+
+{
+    "amount": 19.90,
+    "description": "Invoice #1",
+    "payment_type": "credit_card",
+    "card_number": "4111111111111111",
+    "cvv": "132",
+    "expiry_month": 12,
+    "expiry_year": 2025,
+    "cardholder_name": "Lucas"
+}
+
+### Obter uma fatura especifica
+@invoiceId = {{createInvoice.response.body.id}}
+GET {{baseUrl}}/invoice/{{invoiceId}}
 X-API-Key: {{apiKey}}
